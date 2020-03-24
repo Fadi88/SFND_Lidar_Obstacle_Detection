@@ -47,13 +47,13 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
     typename pcl::PointCloud<PointT>::Ptr obst{new pcl::PointCloud<PointT>};
     typename pcl::PointCloud<PointT>::Ptr road{new pcl::PointCloud<PointT>};
 
-    for(const int index : inliers->indices)
-        road->points.push_back(cloud->points[index]);
-
     extract.setInputCloud (cloud);
     extract.setIndices (inliers);
     extract.setNegative(true);
     extract.filter(*obst);
+
+    extract.setNegative(false);
+    extract.filter(*road);
 
     std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> segResult(obst, road);
 
