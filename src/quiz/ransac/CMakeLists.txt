@@ -16,6 +16,8 @@ list(REMOVE_ITEM PCL_LIBRARIES "vtkproj4")
 
 
 add_executable (quizRansac ransac2d.cpp ../../render/render.cpp)
+install(TARGETS quizRansac  DESTINATION ${CMAKE_BINARY_DIR})
+
 target_link_libraries (quizRansac ${PCL_LIBRARIES})
 
 

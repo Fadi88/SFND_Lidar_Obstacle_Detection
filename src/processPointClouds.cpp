@@ -49,6 +49,7 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
 
     extract.setInputCloud (cloud);
     extract.setIndices (inliers);
+
     extract.setNegative(true);
     extract.filter(*obst);
 
