@@ -24,11 +24,25 @@ struct KdTree
 	KdTree()
 	: root(NULL)
 	{}
+private:
+	void insert_reccursive(Node** parent,std::vector<float> pt,int id,int depth){
+		if(*parent==NULL)
+			*parent = new Node(pt,id);
+		else{
+			if(pt[depth%2] < (*parent)->point[depth%2])
+				insert_reccursive(&((*parent)->left) , pt , id , depth +1 );
+			else
+				insert_reccursive(&((*parent)->right) , pt , id , depth +1 );
+		}
+		
+	}
 
+public:
 	void insert(std::vector<float> point, int id)
 	{
 		// TODO: Fill in this function to insert a new point into the tree
-		// the function should create a new node and place correctly with in the root 
+		// the function should create a new node and place correctly with in the root
+		insert_reccursive(&root , point , id , 0);
 
 	}
 
