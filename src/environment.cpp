@@ -80,9 +80,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer){
     pcl::PointCloud<pcl::PointXYZI>::Ptr cloud = processor_obj.loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
     
     auto seg_result = processor_obj.SegmentPlane(cloud , 100 , 0.3);
-    
     renderPointCloud(viewer,seg_result.first,"inputCloud");
-
     auto cloudClusters = processor_obj.Clustering(seg_result.first, 1.0, 50, 5000);
 
     int clusterId = 0;
