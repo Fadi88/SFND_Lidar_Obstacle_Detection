@@ -39,8 +39,6 @@ private:
 
 	void search_recursive(const std::vector<float>& target, float distance_tolerance, int depth, Node* parent,std::vector<int> &ids){
 		if(parent != NULL){
-			std::cout << "checking node : " << parent->id << std::endl;
-
 			if(
 				(parent->point[0] >= target[0]-distance_tolerance) &&
 				(parent->point[0] <= target[0]+distance_tolerance) &&
