@@ -113,7 +113,7 @@ std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<flo
 
 	return clusters;
 }
-
+#ifndef MAIN_APP_TARGET
 int main ()
 {
 
@@ -175,3 +175,4 @@ int main ()
   	}
   	
 }
+#endif

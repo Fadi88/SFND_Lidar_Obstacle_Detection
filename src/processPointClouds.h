@@ -20,6 +20,7 @@
 #include <unordered_set>
 
 #include "render/box.h"
+#include "kdtree.h"
 
 template<typename PointT>
 class ProcessPointClouds {
@@ -51,4 +52,7 @@ public:
     std::unordered_set<int> RansacPlane(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceTol);
   
 };
+
+std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<float>>&, KdTree*, float);
+
 #endif /* PROCESSPOINTCLOUDS_H_ */

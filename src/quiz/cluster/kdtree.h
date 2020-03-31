@@ -3,7 +3,6 @@
 
 #include "../../render/render.h"
 
-
 // Structure to represent node of kd tree
 struct Node
 {
@@ -29,7 +28,7 @@ private:
 		if(*parent==NULL)
 			*parent = new Node(pt,id);
 		else{
-			if(pt[depth%2] < (*parent)->point[depth%2])
+			if(pt[depth%3] < (*parent)->point[depth%3])
 				insert_recursive(&((*parent)->left) , pt , id , depth +1 );
 			else
 				insert_recursive(&((*parent)->right) , pt , id , depth +1 );
@@ -43,12 +42,16 @@ private:
 				(parent->point[0] >= target[0]-distance_tolerance) &&
 				(parent->point[0] <= target[0]+distance_tolerance) &&
 				(parent->point[1] >= target[1]-distance_tolerance) &&
-				(parent->point[1] <= target[1]+distance_tolerance)
+				(parent->point[1] <= target[1]+distance_tolerance) &&
+				(parent->point[2] >= target[2]-distance_tolerance) &&
+				(parent->point[2] <= target[2]+distance_tolerance)
 			){
 				float distance = std::sqrt(
 					((parent->point[0] - target[0]) * (parent->point[0] - target[0]))
 					+
 					((parent->point[1] - target[1]) * (parent->point[1] - target[1]))
+					+
+					((parent->point[2] - target[2]) * (parent->point[2] - target[2]))
 				);
 
 				if(distance <= distance_tolerance){
@@ -56,10 +59,10 @@ private:
 				}
 			}
 
-			if((target[depth%2] - distance_tolerance) < parent->point[depth%2])
+			if((target[depth%3] - distance_tolerance) < parent->point[depth%3])
 				search_recursive(target , distance_tolerance , depth + 1 , parent->left , ids );
 
-			if((target[depth%2] + distance_tolerance) > parent->point[depth%2])
+			if((target[depth%3] + distance_tolerance) > parent->point[depth%3])
 				search_recursive(target , distance_tolerance , depth + 1 , parent->right , ids );
 
 

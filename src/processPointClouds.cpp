@@ -182,9 +182,9 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
 
     // Time clustering process
     auto startTime = std::chrono::steady_clock::now();
-
     std::vector<typename pcl::PointCloud<PointT>::Ptr> clusters;
 
+#if defined PCL_IMP
     // TODO:: Fill in the function to perform euclidean clustering to group detected obstacles
     pcl::EuclideanClusterExtraction<PointT> ec;
     typename pcl::search::KdTree<PointT>::Ptr tree{new pcl::search::KdTree<PointT>};
@@ -198,6 +198,7 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
 
     ec.extract(clusterIndices);
 
+
     for (const auto &current_cluster_indices : clusterIndices)
     {
         typename pcl::PointCloud<PointT>::Ptr tmp_cluster{new pcl::PointCloud<PointT>};
@@ -210,7 +211,31 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
 
         clusters.push_back(tmp_cluster);
     }
+#else
+    KdTree kdtree_obj{};
+    std::vector<std::vector<float>> points{};
 
+    for (int idx{} ; idx < cloud->points.size(); ++idx){
+        const auto &pt = cloud->points[idx];
+        kdtree_obj.insert({pt.x, pt.y, pt.z}, idx);
+        points.emplace_back(std::vector<float>({pt.x, pt.y, pt.z}));
+    }
+
+    auto custom_clusters = euclideanCluster(points, &kdtree_obj,clusterTolerance);
+
+    for(const auto& idx_vec : custom_clusters){
+
+        typename pcl::PointCloud<PointT>::Ptr tmp_cluster{new pcl::PointCloud<PointT>};
+        tmp_cluster->width = idx_vec.size();
+        tmp_cluster->is_dense = true;
+        tmp_cluster->height = 1;
+
+        for(const auto & idx : idx_vec)
+            tmp_cluster->points.push_back(cloud->points[idx]);
+
+        clusters.push_back(tmp_cluster);
+    }
+#endif
     auto endTime = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
     std::cout << "clustering took " << elapsedTime.count() << " milliseconds and found " << clusters.size() << " clusters" << std::endl;
