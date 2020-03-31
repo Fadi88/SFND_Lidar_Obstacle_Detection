@@ -34,7 +34,7 @@ std::vector<Car> initHighway(bool renderScene, pcl::visualization::PCLVisualizer
     return cars;
 }
 
-
+/*
 void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
 {
     // ----------------------------------------------------
@@ -74,14 +74,15 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
     }
   
 }
+*/
 void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer,ProcessPointClouds<pcl::PointXYZI>& processor_obj, const pcl::PointCloud<pcl::PointXYZI>::Ptr& inputCloud){
 
     //ProcessPointClouds<pcl::PointXYZI> processor_obj{};
     //pcl::PointCloud<pcl::PointXYZI>::Ptr cloud = processor_obj.loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
     
-    auto seg_result = processor_obj.SegmentPlane(inputCloud , 100 , 0.2);
+    auto seg_result = processor_obj.SegmentPlane(inputCloud , 100 , 0.25);
     
-    auto filterCloud = processor_obj.FilterCloud(seg_result.first, 0.25 , Eigen::Vector4f (-20, -4, -3, 1), Eigen::Vector4f ( 25, 6, 2, 1));
+    auto filterCloud = processor_obj.FilterCloud(seg_result.first, 0.25 , Eigen::Vector4f (-15, -4, -1, 1), Eigen::Vector4f ( 8, 6, 2.5, 1));
     
     renderPointCloud(viewer,filterCloud,"filterCloud");
 
