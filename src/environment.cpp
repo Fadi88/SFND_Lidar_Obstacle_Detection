@@ -2,6 +2,8 @@
 // Create simple 3d highway enviroment using PCL
 // for exploring self-driving car sensors
 
+#include <unistd.h>
+
 #include "sensors/lidar.h"
 #include "render/render.h"
 #include "processPointClouds.h"
@@ -80,11 +82,11 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer,ProcessPointClouds
     //ProcessPointClouds<pcl::PointXYZI> processor_obj{};
     //pcl::PointCloud<pcl::PointXYZI>::Ptr cloud = processor_obj.loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
     
-    auto seg_result = processor_obj.SegmentPlane(inputCloud , 100 , 0.25);
+    auto filterCloud = processor_obj.FilterCloud(inputCloud, 0.2 , Eigen::Vector4f (-15, -4, -1, 1), Eigen::Vector4f ( 8, 6, 2.5, 1));
+
+    auto seg_result = processor_obj.SegmentPlane(filterCloud , 100 , 0.2); 
     
-    auto filterCloud = processor_obj.FilterCloud(seg_result.first, 0.25 , Eigen::Vector4f (-15, -4, -1, 1), Eigen::Vector4f ( 8, 6, 2.5, 1));
-    
-    renderPointCloud(viewer,filterCloud,"filterCloud");
+    renderPointCloud(viewer,inputCloud,"filterCloud");
 
     
     auto cloudClusters = processor_obj.Clustering(filterCloud, .7, 30, 500);
@@ -94,6 +96,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer,ProcessPointClouds
 
     for(auto cluster : cloudClusters)
     {
+
         std::cout << "cluster size ";
         processor_obj.numPoints(cluster);
         renderPointCloud(viewer,cluster,"obstCloud"+std::to_string(clusterId),colors[clusterId%3]);
@@ -136,7 +139,7 @@ int main (int argc, char** argv)
     pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
     ProcessPointClouds<pcl::PointXYZI> pointProcessor{};
 
-    std::vector<boost::filesystem::path> stream = pointProcessor.streamPcd("../src/sensors/data/pcd/data_1");
+    std::vector<boost::filesystem::path> stream = pointProcessor.streamPcd("../src/sensors/data/pcd/data_2");
     auto streamIterator = stream.begin();
     pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloudI;
 
@@ -152,6 +155,7 @@ int main (int argc, char** argv)
     // Load pcd and run obstacle detection process
     inputCloudI = pointProcessor.loadPcd((*streamIterator).string());
     cityBlock(viewer, pointProcessor, inputCloudI);
+    usleep(30 *1000);
 
     streamIterator++;
     if(streamIterator == stream.end())
